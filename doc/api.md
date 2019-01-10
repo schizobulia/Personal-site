@@ -26,7 +26,7 @@
 > 文件过滤
 
 ###### 支持格式
-> JSON
+> FormData
 
 ###### HTTP请求方式
 > POST
@@ -41,5 +41,28 @@
     "statue": 1,
     "files": ["part-00000-5f89bc44-6df5-420d-9652-05d0e79d59b0-c000.json"],
     "static": "/parsingfile/out/1546925724258-612195-select * from qs/"
+}
+```
+
+---
+
+**3\. 文件上传**
+###### 接口功能
+> 文件过滤
+
+###### 支持格式
+> FormData
+
+###### HTTP请求方式
+> POST
+
+###### HTTP请求参数
+> { 'file': '' }
+
+###### 接口示例
+> 地址：[http://58.87.85.53:8002/personal-0.1/fileupload](http://58.87.85.53:8002/personal-0.1/fileupload)
+``` javascript
+{
+    "statue": 1
 }
 ```

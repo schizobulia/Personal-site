@@ -1,5 +1,6 @@
 package com.example.personal.server;
 
+import com.example.personal.until.FileTool;
 import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -10,18 +11,16 @@ import java.util.List;
 
 public class SparkSqlServer {
 
-    private static SparkSession sparkSession = null;
+    private SparkSession sparkSession = null;
 
     public SparkSqlServer(){
         getInstance();
     }
 
     public SparkSession getInstance() {
-//       if (sparkSession == null) {
             sparkSession = SparkSession
                     .builder().master("local[2]").appName("Java Spark SQL basic example")
                     .getOrCreate();
-//       }
         return sparkSession;
     }
 
@@ -36,15 +35,41 @@ public class SparkSqlServer {
         Dataset<Row> list = null;
         List<Row> list1 = new ArrayList<Row>();
         for (int i = 0; i < files.size(); i++) {
-            Dataset<Row> dataset = sparkSession.read().json(files.get(i));
-            list1.addAll(dataset.collectAsList());
-            if (list == null){
-                list = dataset;
+            Dataset<Row> dataset = parsingFileBySuffic(files.get(i));
+            if (dataset != null){
+                list1.addAll(dataset.collectAsList());
+                if (list == null){
+                    list = dataset;
+                }
             }
         }
-        Dataset<Row> dataFrame = sparkSession.createDataFrame(list1, list.schema());
+        Dataset<Row> dataFrame = this.sparkSession.createDataFrame(list1, list.schema());
         dataFrame.createTempView("qs");
-        sparkSession.sql(sql).write().json(output);
+        this.sparkSession.sql(sql).write().json(output);
+    }
+
+    /**
+     * 根据文件后缀生成对应的Dataset
+     * @param filePath
+     * @return
+     */
+    public Dataset<Row> parsingFileBySuffic(String filePath){
+        String suffic = FileTool.getFileSuffic(filePath);
+        Dataset<Row> dataset = null;
+        if (suffic.equals("json")){
+            dataset = this.sparkSession.read().json(filePath);
+        } else if (suffic.equals("csv")){
+            dataset = this.sparkSession.read().format("csv")
+                    .option("sep", ";")
+                    .option("inferSchema", "true")
+                    .option("header", "true")
+                    .load(filePath);
+        } else if (suffic.equals("parquet")){
+            dataset = this.sparkSession.read().parquet(filePath);
+        } else if (suffic.equals("orc")){
+            dataset = this.sparkSession.read().orc(filePath);
+        }
+        return dataset;
     }
 
     public void close(){

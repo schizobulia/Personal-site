@@ -74,4 +74,28 @@ public class FileTool {
             return false;
         }
     }
+
+    /**
+     * 获取文件后缀
+     * @param path
+     * @return
+     */
+    public static String getFileSuffic(String path){
+        return path.substring(path.lastIndexOf(".") + 1);
+    }
+
+    /**
+     * 判断数组中文件后缀是否一致
+     * @param files
+     * @return
+     */
+    public static boolean isFileSuffic(List<String> files){
+        String suffic = getFileSuffic(files.get(0));
+        for (int i = 1; i < files.size(); i++) {
+            if (!suffic.equals(getFileSuffic(files.get(i)))){
+                return false;
+            }
+        }
+        return true;
+    }
 }

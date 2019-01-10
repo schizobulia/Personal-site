@@ -44,6 +44,12 @@ public class FileController {
             for (int i = 0; i < jsonArray.length(); i++) {
                 filesPath.add(staticPath + "input/" + key + "/" + jsonArray.get(i)); //文件的路径
             }
+            if (!FileTool.isFileSuffic(filesPath)){
+                status = 0;
+                jsonObject.put("status", status);
+                jsonObject.put("error", "file suffice is not");
+                return jsonObject.toString();
+            }
             SparkSqlServer sparkSqlServer = new SparkSqlServer();
             try {
                 sparkSqlServer.parsingMoreJson(filesPath, sql, staticPath + "out/"
