@@ -2,6 +2,7 @@ package com.example.personal.controller;
 
 import com.example.personal.server.SparkSqlServer;
 import com.example.personal.until.Application;
+import com.example.personal.until.Encrypt;
 import com.example.personal.until.FileTool;
 import com.example.personal.until.TimeTool;
 import org.json.JSONArray;
@@ -117,6 +118,12 @@ public class FileController {
      */
     @RequestMapping(value = "/createkey", method = RequestMethod.GET)
     public String createKey() {
-        return String.valueOf(new Date().getTime()) + "-" + TimeTool.createIntValue(1100000, 1);
+        String key = String.valueOf(new Date().getTime()) + "-" + TimeTool.createIntValue(1100000, 1);
+        try {
+            return Encrypt.encrypt_Base64(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return key;
     }
 }

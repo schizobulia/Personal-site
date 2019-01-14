@@ -15,7 +15,7 @@
 > GET
 
 ###### 接口示例
-> 地址：[http://58.87.85.53:8002/personal-0.1/createkey](http://58.87.85.53:8002/personal-0.1/createkey)
+> 地址：[http://www.jcbsb.com:8002/personal-0.1/createkey](http://www.jcbsb.com:8002/personal-0.1/createkey)
 ``` javascript
     1546836795828-628759
 ```
@@ -35,7 +35,7 @@
 > { 'sql': 'select * from qs', "key": "1546925760639-654869", "files": "['a.json', 'b.json']" }
 
 ###### 接口示例
-> 地址：[http://58.87.85.53:8002/personal-0.1/parsing](http://58.87.85.53:8002/personal-0.1/parsing)
+> 地址：[http://www.jcbsb.com:8002/personal-0.1/parsing](http://www.jcbsb.com:8002/personal-0.1/parsing)
 ``` javascript
 {
     "statue": 1,
@@ -57,10 +57,10 @@
 > POST
 
 ###### HTTP请求参数
-> { 'file': '' }
+> { 'file': ''，data："1547176310885-816408" }
 
 ###### 接口示例
-> 地址：[http://58.87.85.53:8002/personal-0.1/fileupload](http://58.87.85.53:8002/personal-0.1/fileupload)
+> 地址：[http://www.jcbsb.com:8002/personal-0.1/fileupload](http://www.jcbsb.com:8002/personal-0.1/fileupload)
 ``` javascript
 {
     "statue": 1
