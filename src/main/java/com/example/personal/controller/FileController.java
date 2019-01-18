@@ -26,16 +26,16 @@ public class FileController {
      * @return
      */
     @RequestMapping(value = "/parsing", method = RequestMethod.POST)
-    public String parsingJson(@RequestParam String key, @RequestParam String files, @RequestParam String sql) throws FileNotFoundException {
+    public String parsingJson(@RequestParam String key, @RequestParam String files, @RequestParam String sql) throws Exception {
         int status = 0;
         JSONObject jsonObject = new JSONObject();
         if (key != null && sql != null && files != null) {
-            String outputKey = key + "-" + sql.trim();  //create key output dird
+            String outputKey = key + "/" + Encrypt.encrypt_Base64(sql.trim());  //create key output dird
             String staticPath = Application.getParsingFilePath();
             jsonObject.put("static", "/parsingfile/out/" + outputKey + "/");
-            if (new File(staticPath + "out/" + outputKey).exists()) {
+            List<String> fileByPath =  FileTool.getFileByKeyAndSql(key, sql);
+            if (fileByPath.size() > 0) {
                 status = 1;
-                List<String> fileByPath = FileTool.getFileByPath(staticPath + "out/" + outputKey + "/", "json");
                 jsonObject.put("files", fileByPath);
                 jsonObject.put("status", status);
                 return jsonObject.toString();
@@ -62,7 +62,7 @@ public class FileController {
             }
             if (key != "") {
                 FileTool.mkdirDirectory(staticPath + "out");
-                List<String> fileByPath = FileTool.getFileByPath(staticPath + "out/" + outputKey + "/", "json");
+                fileByPath = FileTool.getFileByPath(staticPath + "out/" + outputKey + "/", "json");
                 status = 1;
                 jsonObject.put("status", status);
                 jsonObject.put("files", fileByPath);
@@ -118,12 +118,52 @@ public class FileController {
      */
     @RequestMapping(value = "/createkey", method = RequestMethod.GET)
     public String createKey() {
+        JSONObject result = new JSONObject();
+        int status = 0;
         String key = String.valueOf(new Date().getTime()) + "-" + TimeTool.createIntValue(1100000, 1);
         try {
-            return Encrypt.encrypt_Base64(key);
+            status = 1;
+            result.put("key", Encrypt.encrypt_Base64(key));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return key;
+        result.put("status", status);
+        return result.toString();
     }
+
+    /**
+     * 历史查询
+     * @param key
+     * @return
+     */
+    @RequestMapping(value = "/historysql", method = RequestMethod.GET)
+    public String historyListBykey(@RequestParam String key){
+        JSONObject result = new JSONObject();
+        int status = 0;
+        try {
+            String path = Application.getParsingFilePath() + "out/" + key;
+            if (new File(path).exists()){
+                status = 1;
+                List<String> historySql = FileTool.getDirByPath(path);
+                List<JSONObject> list = new ArrayList<JSONObject>();
+                for (int i = 0; i < historySql.size(); i++) {
+                    JSONObject object = new JSONObject();
+                    String sql = Encrypt.decrypt_Base64(historySql.get(i));
+                    object.put("sql", sql);
+                    object.put("files", FileTool.getFileByKeyAndSql(key, sql));
+                    list.add(object);
+                }
+                result.put("sqlpath", historySql);
+                result.put("static", "/parsingfile/out/" + key + "/");
+                result.put("sqls", list);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        result.put("status", status);
+        return result.toString();
+    }
+
 }

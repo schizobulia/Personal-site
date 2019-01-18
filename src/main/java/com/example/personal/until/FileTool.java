@@ -56,6 +56,21 @@ public class FileTool {
         return list;
     }
 
+    public static List<String> getDirByPath(String path){
+        List<String> list = new ArrayList<String>();
+        File f = new File(path);
+        if (f.exists()){
+            File fa[] = f.listFiles();
+            for (int i = 0; i < fa.length; i++) {
+                File fs = fa[i];
+                if (fs.isDirectory()) {
+                    list.add(fs.getName());
+                }
+                fs = null;
+            }
+        }
+        return list;
+    }
     /**
      * @param destDirName 路径
      */
@@ -98,4 +113,22 @@ public class FileTool {
         }
         return true;
     }
+
+    /**
+     * 根据key与sql获取生成的文件
+     * @param key
+     * @param sql
+     * @return
+     * @throws Exception
+     */
+    public static List<String> getFileByKeyAndSql(String key, String sql) throws Exception {
+        List<String> list = new ArrayList<String>();
+        String outputKey = key + "/" + Encrypt.encrypt_Base64(sql.trim());  //create key output dird
+        String staticPath = Application.getParsingFilePath();
+        if (new File(staticPath + "out/" + outputKey).exists()) {
+            list = FileTool.getFileByPath(staticPath + "out/" + outputKey + "/", "json");
+        }
+        return list;
+    }
+
 }
