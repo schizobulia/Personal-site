@@ -5,6 +5,8 @@ import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.StructType;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,13 @@ public class SparkSqlServer {
             dataset = this.sparkSession.read().orc(filePath);
         }
         return dataset;
+    }
+
+    public JSONObject getStructureByFiles(String filePath){
+        Dataset<Row> dataset = this.sparkSession.read().json(filePath);
+        StructType schema = dataset.schema();
+        this.sparkSession.close();
+        return new JSONObject(schema.json());
     }
 
     public void close(){
